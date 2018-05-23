@@ -12,7 +12,7 @@ import UIKit
 import Alamofire
 
 //API
-
+//HKS
 //MARK: BASE URL
 let strBaseUrl = "http://beta.voiceofsap.org/wp-json/custom-api/v3/"
 
