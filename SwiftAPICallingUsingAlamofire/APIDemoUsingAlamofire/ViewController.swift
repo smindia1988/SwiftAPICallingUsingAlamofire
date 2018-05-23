@@ -19,14 +19,32 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        API.sharedInstance.apiRequestWithModalClass(type: [ModelCountry].self,apiTypeValue: .CountryAPI, params: nil, method: .GET, SuccessBlock: { (response) in
+        
+        ///*
+        //[1] Sample - Call api with Model Class response
+        API.sharedInstance.apiRequestWithModalClass(modelClass: [ModelCountry].self, apiName: APIName.Country, requestType: .get, paramValues: nil, headersValues: nil, SuccessBlock: { (response) in
             
             let countryObj = response as! [ModelCountry]
             print(countryObj[0].name!)
             
-        }, FailureBlock: { (error) in
-            print(error?.localizedDescription)
+        },FailureBlock:{ (error) in
+            
+            print(error.localizedDescription)
         })
+        //*/
+        
+        
+        /*
+        //[2] Sample - Call api with JSON data response
+        API.sharedInstance.apiRequestWithJsonResponse(apiName: APIName.Country, requestType: .get, paramValues: nil, headersValues: nil, SuccessBlock: { (response) in
+            
+            let arrayData = response as! Array<[String : AnyObject]>
+            print(arrayData[0]["name"]!)
+            
+        }, FailureBlock:{ (error) in
+            print(error.localizedDescription)
+        })
+        */
     }
 
     override func didReceiveMemoryWarning() {
