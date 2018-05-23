@@ -3,20 +3,20 @@
 
 **Set your Base URL in API.swift class**
 //MARK: BASE URL
-let strBaseUrl = "YOUR BASE URL"
+`let strBaseUrl = "YOUR BASE URL"`
 
 
 **Add your API name here in API.swift class**
 
-struct APIName {
+`struct APIName {`
 
-static let Country = "country-list"
+`static let Country = "country-list"`
 
-static let ForgotPassword = "api/people/"
+`static let ForgotPassword = "api/people/"`
 
-static let Login = "userlogin"
+`static let Login = "userlogin"`
 
-}
+`}`
 
 
 **Create Model struct as per your requirement:**
