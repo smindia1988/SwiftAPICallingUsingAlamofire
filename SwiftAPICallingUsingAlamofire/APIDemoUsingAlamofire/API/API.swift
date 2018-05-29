@@ -14,7 +14,8 @@ import Alamofire
 //API
 
 //MARK: BASE URL
-let strBaseUrl = "http://beta.voiceofsap.org/wp-json/custom-api/v3/"
+//let strBaseUrl = "http://beta.voiceofsap.org/wp-json/custom-api/v3/"
+let strBaseUrl = "https://api.imgur.com"
 
 //MARK: API METHOD NAME
 struct APIConstant {
@@ -25,9 +26,7 @@ struct APIConstant {
 
 struct APIName {
     static let Country = "country-list"
-    static let ForgotPassword = "api/people/"
-    static let Login = "userlogin"
-    static let EditProfile = "dit-profile"
+    static let UploadImages = "/3/image"
 }
 
 class API: NSObject {
@@ -88,6 +87,38 @@ class API: NSObject {
             }
         }
     }
+    
+    //MARK: - Upload API
+    func apiRequestUpload(apiName:String, requestType:HTTPMethod, paramValues: Dictionary<String, Any>?, headersValues:Dictionary<String, String>?, imagesData:[Data], uploadKey:String, SuccessBlock:@escaping (AnyObject) -> Void, FailureBlock:@escaping (Error)-> Void) {
+        
+        let url = strBaseUrl + apiName
+        
+        Alamofire.upload(multipartFormData: { (multipartFormData) in
+            
+            // import image to request
+            for imageData in imagesData {
+                //multipartFormData.append(imageData, withName: "\(uploadKey)[]", fileName: "\(Date().timeIntervalSince1970).png", mimeType: "image/png")
+                multipartFormData.append(imageData, withName:uploadKey as String, fileName: "\(Date().timeIntervalSince1970).png", mimeType: "image/png")
+            }
+            for (key, value) in paramValues! {
+                multipartFormData.append((value as AnyObject).data(using: String.Encoding.utf8.rawValue)!, withName: key)
+            }
+            
+        }, usingThreshold: 0, to: url, method: requestType, headers: headersValues) { (encodingResult) in
+            
+            switch encodingResult {
+            case .success(let upload, _, _):
+                upload.responseJSON { response in
+                    print("Uploaded Successfully:\n Response:\n \(response)")
+                    SuccessBlock(response as AnyObject)
+                }
+            case .failure(let error):
+                print("Uploaded Failed:\n Error:\n \(error)")
+                FailureBlock(error)
+            }
+        }
+    }
+    
     
     //MARK: - Supporting Methods
     fileprivate func handleParseError(_ data: Data) -> Error{
