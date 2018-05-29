@@ -52,7 +52,7 @@ class ViewController: UIViewController {
     }
     @IBAction func callAPIUplod(_ sender: Any) {
      
-        //[2] Sample - Multipl Upload API
+        //[3] Sample - Multiple Upload API
         
         let image1 = UIImage(named: "tempImage1")
         let image2 = UIImage(named: "tempImage2")
