@@ -63,3 +63,22 @@
 
 `})`
 
+**Make API service call Multiple Upload:**
+
+//[3] Sample - Multiple Upload API
+        
+        let image1 = UIImage(named: "tempImage1")
+        let image2 = UIImage(named: "tempImage2")
+        let imagesData = [UIImagePNGRepresentation(image1!), UIImagePNGRepresentation(image2!)]
+        
+        let headers = ["Authorization":"Client-ID <Your_Client_ID>"]
+        let params = ["title":"Test Upload", "description":"Test description"]
+        
+        API.sharedInstance.apiRequestUpload(apiName: APIName.UploadImages, requestType: .post, paramValues: params, headersValues: headers, imagesData: imagesData as! [Data], uploadKey:"image",SuccessBlock: { (response) in
+            
+            //Do your next task after uplod success...
+            print(response)
+            
+        },FailureBlock: { (error) in
+            print(error.localizedDescription)
+        })
