@@ -1,9 +1,8 @@
 //
 //  API.swift
-//  SwiftyJson4.0
+//  Created by Sandip Patel (SM) on 19/06/18.
+//  Copyright © 2018 BV. All rights reserved.
 //
-//  Created by Hitesh.surani on 11/10/17.
-//  Copyright © 2017 Brainvire. All rights reserved.
 
 //Alamofire Help Guide: https://github.com/Alamofire/Alamofire/blob/master/Documentation/Usage.md#response-validation
 
@@ -12,10 +11,9 @@ import UIKit
 import Alamofire
 
 //API
-
-//MARK: BASE URL
-//let strBaseUrl = "http://beta.voiceofsap.org/wp-json/custom-api/v3/"
-let strBaseUrl = "https://api.imgur.com"
+//MARK: BASE URL  //SMP: CONFIG
+let strBaseUrl = "http://beta.voiceofsap.org/wp-json/custom-api/v3/"
+//let strBaseUrl = "https://api.imgur.com"
 
 //MARK: API METHOD NAME
 struct APIConstant {
@@ -25,7 +23,10 @@ struct APIConstant {
 }
 
 struct APIName {
+    static let Login = "api/customer/login"
     static let Country = "country-list"
+    static let ForgotPassword = "api/people/"
+    static let EditProfile = "dit-profile"
     static let UploadImages = "/3/image"
 }
 
@@ -34,13 +35,17 @@ class API: NSObject {
     static let sharedInstance = API()
     
     private override init() {
-
+        
     }
     
     //MARK: - API calling with Model Class response
     func apiRequestWithModalClass<T:Decodable>(modelClass:T.Type?, apiName:String, requestType:HTTPMethod, paramValues: Dictionary<String, Any>?, headersValues:Dictionary<String, String>?, SuccessBlock:@escaping (AnyObject) -> Void, FailureBlock:@escaping (Error)-> Void) {
         
         let url = strBaseUrl + apiName
+        print("\n<<<=================================>>>\n")
+        print("API Call: \(url)\n")
+        print("Headers: \(String(describing: headersValues))\n")
+        print("Parameters: \(String(describing: paramValues))\n")
         
         Alamofire.request(url, method: requestType, parameters: paramValues, encoding: URLEncoding.httpBody, headers: headersValues).validate().response { (response) in
             
@@ -54,6 +59,10 @@ class API: NSObject {
                 }
                 
                 do {
+                    let jsonResponse = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                    print("\nResponse:\n \(jsonResponse)\n")
+                    print("\n<<<=================================>>>\n")
+                    
                     let objModalClass = try JSONDecoder().decode(modelClass!,from: data)
                     print(objModalClass)
                     SuccessBlock(objModalClass as AnyObject)
@@ -74,12 +83,17 @@ class API: NSObject {
     func apiRequestWithJsonResponse(apiName:String, requestType:HTTPMethod, paramValues: Dictionary<String, Any>?, headersValues:Dictionary<String, String>?, SuccessBlock:@escaping (AnyObject) -> Void, FailureBlock:@escaping (Error)-> Void) {
         
         let url = strBaseUrl + apiName
+        print("\n<<<=================================>>>\n")
+        print("API Call: \(url)\n")
+        print("Headers: \(String(describing: headersValues))\n")
+        print("Parameters: \(String(describing: paramValues))\n")
         
         Alamofire.request(url, method: requestType, parameters: paramValues, encoding: URLEncoding.httpBody, headers: headersValues).validate().responseJSON { (response) in
             
             switch response.result {
             case .success:
-                //print("Validation Successful")
+                print("\nResponse:\n \(String(describing: response.result.value))\n")
+                print("\n<<<=================================>>>\n")
                 SuccessBlock(response.result.value as AnyObject)
             case .failure(let error):
                 print(error)
@@ -108,6 +122,12 @@ class API: NSObject {
             
             switch encodingResult {
             case .success(let upload, _, _):
+                
+                upload.uploadProgress(closure: { (Progress) in
+                    print("upload progress \(Progress.fractionCompleted)");
+                    
+                })
+                
                 upload.responseJSON { response in
                     print("Uploaded Successfully:\n Response:\n \(response)")
                     SuccessBlock(response as AnyObject)
@@ -118,7 +138,6 @@ class API: NSObject {
             }
         }
     }
-    
     
     //MARK: - Supporting Methods
     fileprivate func handleParseError(_ data: Data) -> Error{
@@ -131,6 +150,7 @@ class API: NSObject {
         
         return error
     }
+    
 }
 
 
